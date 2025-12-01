@@ -53,10 +53,14 @@
         <section id="deliverables">
             <div class="pdf-menu" id="pdfMenu">
                 <h3>Deliverables</h3>
+
+                <!-- Old/New -->
                 <nav class="pdf-group-nav" aria-label="Deliverable groups">
-                    <button class="pdf-group-tab active" data-group="old">Phase 1</button>
-                    <button class="pdf-group-tab" data-group="new">Phase 2</button>
+                    <button class="pdf-group-tab active" data-group="old">Old</button>
+                    <button class="pdf-group-tab" data-group="new">New</button>
                 </nav>
+
+                <!-- 5 selectors (labels update per group) -->
                 <nav class="pdf-nav" aria-label="PDF selector">
                     <button class="pdf-tab active" data-index="0">PDF 1</button>
                     <button class="pdf-tab" data-index="1">PDF 2</button>
@@ -64,9 +68,11 @@
                     <button class="pdf-tab" data-index="3">PDF 4</button>
                     <button class="pdf-tab" data-index="4">PDF 5</button>
                 </nav>
+
                 <div class="pdf-view">
                     <iframe id="pdfFrame" title="PDF preview" src="" loading="lazy"></iframe>
                 </div>
+
                 <div class="pdf-actions">
                     <a id="viewFullBtn" class="btn" target="_blank" rel="noopener">View full PDF</a>
                     <a id="downloadBtn" class="btn" download>Download PDF</a>
@@ -93,8 +99,7 @@
             (function(){
                 const nav = document.getElementById('navbar');
                 const toggle = document.getElementById('navToggle');
-                const leftLinks = document.querySelectorAll('.nav-left .nav-link');
-                const rightLinks = document.querySelectorAll('.nav-right .nav-link');
+                const links = document.querySelectorAll('.nav-link');
 
                 if (!nav || !toggle) return;
 
@@ -103,47 +108,23 @@
                 });
 
                 // Close menu when any link is clicked
-                [...leftLinks, ...rightLinks].forEach(link => {
+                links.forEach(link => {
                     link.addEventListener('click', () => {
                         nav.classList.remove('nav-open');
                     });
                 });
-
-                // On mobile, copy right links into left menu
-                function updateMobileMenu() {
-                    const isMobile = window.innerWidth < 600;
-                    const leftContainer = document.querySelector('.nav-left');
-                    
-                    if (isMobile) {
-                        // Clone right links into left menu if not already there
-                        rightLinks.forEach(link => {
-                            if (!leftContainer.contains(link)) {
-                                leftContainer.appendChild(link.cloneNode(true));
-                            }
-                        });
-                        // Re-attach click handlers to cloned links
-                        leftContainer.querySelectorAll('.nav-link').forEach(link => {
-                            link.addEventListener('click', () => {
-                                nav.classList.remove('nav-open');
-                            });
-                        });
-                    }
-                }
-
-                updateMobileMenu();
-                window.addEventListener('resize', updateMobileMenu);
             })();
         </script>
 
         <script>
             (function () {
-                // Update to real files
+                // Point these to your real files in /pdfs
                 const groups = {
                     old: [
                         { title: 'Requirements', src: 'pdfs/Arch1.pdf' },
                         { title: 'Architecture', src: 'pdfs/old2.pdf' },
-                        { title: 'Risk Assessment and Mitigation', src: 'pdfs/old3.pdf' },
-                        { title: 'Method Selection and Planning', src: 'pdfs/old4.pdf' },
+                        { title: 'Risk Assessment', src: 'pdfs/old3.pdf' },
+                        { title: 'Planning', src: 'pdfs/old4.pdf' },
                         { title: 'Implementation', src: 'pdfs/old5.pdf' }
                     ],
                     new: [
@@ -151,7 +132,7 @@
                         { title: 'Implementation', src: 'pdfs/new2.pdf' },
                         { title: 'Testing', src: 'pdfs/new3.pdf' },
                         { title: 'User Evaluation', src: 'pdfs/new4.pdf' },
-                        { title: 'Continuous Integration', src: 'pdfs/new5.pdf' }
+                        { title: 'CI', src: 'pdfs/new5.pdf' }
                     ]
                 };
 
@@ -168,15 +149,14 @@
                 function updateTabLabels(group) {
                     const pdfs = groups[group];
                     pdfTabs.forEach((tab, idx) => {
-                        if (pdfs[idx]) {
-                            tab.textContent = pdfs[idx].title;
-                        }
+                        if (pdfs[idx]) tab.textContent = pdfs[idx].title;
                     });
                 }
 
                 function loadPdf(group, i) {
                     const pdf = groups[group][i];
                     if (!pdf) return;
+                    // Simple inline PDF (no PDF.js)
                     frame.src = pdf.src + '#toolbar=0&navpanes=0';
                     viewFull.href = pdf.src;
                     download.href = pdf.src;
@@ -195,12 +175,10 @@
                     loadPdf(currentGroup, currentIndex);
                 }
 
-                // Group tab clicks (Old/New)
                 groupTabs.forEach(btn => {
                     btn.addEventListener('click', () => switchGroup(btn.dataset.group));
                 });
 
-                // PDF tab clicks (1-5)
                 pdfTabs.forEach((btn, idx) => {
                     btn.addEventListener('click', () => {
                         currentIndex = idx;

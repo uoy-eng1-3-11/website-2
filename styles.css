@@ -359,7 +359,7 @@ h1 em {
 .pdf-view {
     margin-top: 1.5rem;
     border-radius: 12px;
-    overflow: hidden;
+    overflow: hidden;             /* clip viewer chrome */
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
@@ -370,6 +370,7 @@ h1 em {
     max-height: 80vh;
     border: none;
     display: block;
+    -webkit-overflow-scrolling: touch;  /* smoother scrolling where applicable */
 }
 
 .pdf-actions {
