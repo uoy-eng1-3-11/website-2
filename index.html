@@ -13,8 +13,10 @@
         <a id="top"></a>
 
         <!-- Navbar -->
-        <nav class="navbar">
-            <div class="nav-left">
+        <nav class="navbar" id="navbar">
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+
+            <div class="nav-left" id="navMenu">
                 <a href="#top" class="nav-link">Home</a>
                 <a href="#gameplay" class="nav-link">Gameplay</a>
             </div>
@@ -85,6 +87,28 @@
                 <p>Harrison Barrans</p>
             </div>
         </section>
+
+        <script>
+            // Hamburger menu toggle
+            (function(){
+                const nav = document.getElementById('navbar');
+                const toggle = document.getElementById('navToggle');
+                const links = document.querySelectorAll('.nav-link');
+
+                if (!nav || !toggle) return;
+
+                toggle.addEventListener('click', () => {
+                    nav.classList.toggle('nav-open');
+                });
+
+                // Close menu when a link is clicked
+                links.forEach(link => {
+                    link.addEventListener('click', () => {
+                        nav.classList.remove('nav-open');
+                    });
+                });
+            })();
+        </script>
 
         <script>
             (function () {
