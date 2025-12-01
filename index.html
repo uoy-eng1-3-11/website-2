@@ -93,7 +93,8 @@
             (function(){
                 const nav = document.getElementById('navbar');
                 const toggle = document.getElementById('navToggle');
-                const links = document.querySelectorAll('.nav-link');
+                const leftLinks = document.querySelectorAll('.nav-left .nav-link');
+                const rightLinks = document.querySelectorAll('.nav-right .nav-link');
 
                 if (!nav || !toggle) return;
 
@@ -102,11 +103,35 @@
                 });
 
                 // Close menu when any link is clicked
-                links.forEach(link => {
+                [...leftLinks, ...rightLinks].forEach(link => {
                     link.addEventListener('click', () => {
                         nav.classList.remove('nav-open');
                     });
                 });
+
+                // On mobile, copy right links into left menu
+                function updateMobileMenu() {
+                    const isMobile = window.innerWidth < 600;
+                    const leftContainer = document.querySelector('.nav-left');
+                    
+                    if (isMobile) {
+                        // Clone right links into left menu if not already there
+                        rightLinks.forEach(link => {
+                            if (!leftContainer.contains(link)) {
+                                leftContainer.appendChild(link.cloneNode(true));
+                            }
+                        });
+                        // Re-attach click handlers to cloned links
+                        leftContainer.querySelectorAll('.nav-link').forEach(link => {
+                            link.addEventListener('click', () => {
+                                nav.classList.remove('nav-open');
+                            });
+                        });
+                    }
+                }
+
+                updateMobileMenu();
+                window.addEventListener('resize', updateMobileMenu);
             })();
         </script>
 
