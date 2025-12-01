@@ -140,9 +140,9 @@ html {
         text-align: center;
     }
 
-    .nav-left {
+    .nav-left,
+    .nav-right {
         grid-column: 1 / -1;
-        grid-row: 2;
         position: relative;
         top: 0;
         left: 0;
@@ -157,12 +157,24 @@ html {
         transition: max-height 0.3s ease;
     }
 
+    .nav-left {
+        grid-row: 2;
+    }
+
     .nav-right {
-        display: none; /* All links in nav-left on mobile */
+        grid-row: 3;
+    }
+
+    .navbar.nav-open .nav-left,
+    .navbar.nav-open .nav-right {
+        max-height: 200px;
     }
 
     .navbar.nav-open .nav-left {
-        max-height: 300px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .navbar.nav-open .nav-right {
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
