@@ -1,63 +1,199 @@
 <!DOCTYPE html>
 
 <head>
-    <script type="text/javascript">
-        console.log("!")
-
-        let texts = [
-        "I love Charlie Jeffries!",
-        "Mike Freeman is the best!",
-        "Please choose this project",
-        "This is a website"
-        ]
-        
-        function getRandomInt(min, max){
-            return Math.floor(Math.random() * (max-min)) + min
-        }
-
-        let arrayNum = getRandomInt(0, texts.length);
-        console.log("This will execute now");
-        document.title = texts[arrayNum];
-
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="styles.css">
-    <title id="title">I love Charlie Jeffries!</title>
-
+    <title id="title">No more woke nonsense</title>
 </head>
 
 <html>
     <body>
 
-        <div class="topnav">
-            <a class="active">Home</a>
-            <a href="deliverables.html">Deliverables</a>
-        </div>
+        <!-- Page sections -->
+        <a id="top"></a>
 
-        <div class="title">
-            <h1>Cohort 3 Team 8 Game</h1>
-        </div>
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <a href="#top" class="nav-link">Home</a>
+                <a href="#gameplay" class="nav-link">Gameplay</a>
+            </div>
 
-        <h3>This is the group project of cohort 3 team 8</h3>
+            <h3 class="nav-title">Cohort 3 Group 11</h3>
 
-        <p>This game is very cool, please choose this project or Bob will be sad</p>
+            <div class="nav-right">
+                <a href="#deliverables" class="nav-link">Deliverables</a>
+                <a href="#team" class="nav-link">Team</a>
+            </div>
+        </nav>
 
-        <br>
+        <!-- Gameplay section -->
+        <section id="gameplay">
+            <figure class="game-media">
+                <div class="media-shell">
+                    <div class="media-frame">
+                        <video class="game-video" id="gameVideo" controls playsinline preload="metadata" poster="Images/bobcapturegame.png">
+                            <source src="Videos/gameplay.mp4" type="video/mp4">
+                            <source src="Videos/gameplay.webm" type="video/webm">
+                            Your browser does not support the video tag.
+                        </video>
+                        <button class="media-play" id="mediaPlay" aria-label="Play video">▶</button>
+                    </div>
+                </div>
+                <figcaption class="media-caption">
+                    <span class="media-title">Gameplay Preview</span>
+                    <span class="media-subtitle">A quick look at core mechanics and moment-to-moment action.</span>
+                </figcaption>
+            </figure>
+        </section>
 
-        <img src="Images/bobcapturegame.png">
+        <!-- Deliverables section -->
+        <section id="deliverables">
+            <div class="pdf-menu" id="pdfMenu">
+                <h3>Deliverables</h3>
+                <nav class="pdf-group-nav" aria-label="Deliverable groups">
+                    <button class="pdf-group-tab active" data-group="old">Phase 1</button>
+                    <button class="pdf-group-tab" data-group="new">Phase 2</button>
+                </nav>
+                <nav class="pdf-nav" aria-label="PDF selector">
+                    <button class="pdf-tab active" data-index="0">PDF 1</button>
+                    <button class="pdf-tab" data-index="1">PDF 2</button>
+                    <button class="pdf-tab" data-index="2">PDF 3</button>
+                    <button class="pdf-tab" data-index="3">PDF 4</button>
+                    <button class="pdf-tab" data-index="4">PDF 5</button>
+                </nav>
+                <div class="pdf-view">
+                    <iframe id="pdfFrame" title="PDF preview" src="" loading="lazy"></iframe>
+                </div>
+                <div class="pdf-actions">
+                    <a id="viewFullBtn" class="btn" target="_blank" rel="noopener">View full PDF</a>
+                    <a id="downloadBtn" class="btn" download>Download PDF</a>
+                </div>
+            </div>
+        </section>
 
-        <br>
+        <!-- Team section -->
+        <section id="team">
+            <div class="team">
+                <p>Harry Turner</p>
+                <p>Arnav Jamidar</p>
+                <p>Callum Newton</p>
+                <p>Joshua Wainwright</p>
+                <p>Daniel Thwaites</p>
+                <p>Piotr Koziol</p>
+                <p>Sarvesh Sridhar</p>
+                <p>Harrison Barrans</p>
+            </div>
+        </section>
 
-        <h4>Team members:</h4>
+        <script>
+            (function () {
+                // Update to real files
+                const groups = {
+                    old: [
+                        { title: 'Requirements', src: 'pdfs/Arch1.pdf' },
+                        { title: 'Architecture', src: 'pdfs/old2.pdf' },
+                        { title: 'Risk Assessment and Mitigation', src: 'pdfs/old3.pdf' },
+                        { title: 'Method Selection and Planning', src: 'pdfs/old4.pdf' },
+                        { title: 'Implementation', src: 'pdfs/old5.pdf' }
+                    ],
+                    new: [
+                        { title: 'Change Report', src: 'pdfs/new1.pdf' },
+                        { title: 'Implementation', src: 'pdfs/new2.pdf' },
+                        { title: 'Testing', src: 'pdfs/new3.pdf' },
+                        { title: 'User Evaluation', src: 'pdfs/new4.pdf' },
+                        { title: 'Continuous Integration', src: 'pdfs/new5.pdf' }
+                    ]
+                };
 
-        <div class="team">
-            <p>Henry G</p>
-            <p>Lenny S</p>
-            <p>Isaac M</p>
-            <p>Andri K</p>
-            <p>Rishi T</p>
-            <p>Isaac K</p>
-            <p>Viktor B</p>
-        </div>
+                const frame = document.getElementById('pdfFrame');
+                const viewFull = document.getElementById('viewFullBtn');
+                const download = document.getElementById('downloadBtn');
+
+                const groupTabs = document.querySelectorAll('.pdf-group-tab');
+                const pdfTabs = document.querySelectorAll('.pdf-tab');
+
+                let currentGroup = 'old';
+                let currentIndex = 0;
+
+                function updateTabLabels(group) {
+                    const pdfs = groups[group];
+                    pdfTabs.forEach((tab, idx) => {
+                        if (pdfs[idx]) {
+                            tab.textContent = pdfs[idx].title;
+                        }
+                    });
+                }
+
+                function loadPdf(group, i) {
+                    const pdf = groups[group][i];
+                    if (!pdf) return;
+                    frame.src = pdf.src + '#toolbar=0&navpanes=0';
+                    viewFull.href = pdf.src;
+                    download.href = pdf.src;
+                    download.setAttribute('download', pdf.src.split('/').pop());
+                }
+
+                function setActiveTab(i) {
+                    pdfTabs.forEach(t => t.classList.remove('active'));
+                    pdfTabs[i].classList.add('active');
+                }
+
+                function switchGroup(group) {
+                    currentGroup = group;
+                    groupTabs.forEach(t => t.classList.toggle('active', t.dataset.group === group));
+                    updateTabLabels(group);
+                    loadPdf(currentGroup, currentIndex);
+                }
+
+                // Group tab clicks (Old/New)
+                groupTabs.forEach(btn => {
+                    btn.addEventListener('click', () => switchGroup(btn.dataset.group));
+                });
+
+                // PDF tab clicks (1-5)
+                pdfTabs.forEach((btn, idx) => {
+                    btn.addEventListener('click', () => {
+                        currentIndex = idx;
+                        setActiveTab(idx);
+                        loadPdf(currentGroup, currentIndex);
+                    });
+                });
+
+                // Init
+                updateTabLabels('old');
+                setActiveTab(0);
+                loadPdf('old', 0);
+            })();
+        </script>
+        <!-- End PDF Menu -->
+
+        <script>
+            // filepath: c:\WEB DEV\ENG1-3-11\website-2\index.html
+            (function(){
+    const v = document.getElementById('gameVideo');
+    const btn = document.getElementById('mediaPlay');
+    if (!v || !btn) return;
+
+    function toggleOverlay() {
+        const show = v.paused;
+        btn.style.opacity = show ? 1 : 0;
+        btn.style.pointerEvents = show ? 'auto' : 'none';
+    }
+
+    btn.addEventListener('click', () => {
+        v.play().catch(()=>{});
+        toggleOverlay();
+    });
+
+    v.addEventListener('play', toggleOverlay);
+    v.addEventListener('pause', toggleOverlay);
+    v.addEventListener('ended', toggleOverlay);
+
+    // Init overlay based on poster
+    toggleOverlay();
+})();
+        </script>
 
     </body>
 </html>
