@@ -820,3 +820,9 @@ h1 em {
         font-size: 0.95rem;
     }
 }
+
+@media (min-width: 2000px) {
+    .links {
+        width: 40%;
+    }
+}
