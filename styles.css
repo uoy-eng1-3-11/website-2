@@ -797,10 +797,13 @@ h1 em {
         gap: 1rem;
         flex-direction: column;
         align-items: stretch;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .btn-link {
-        width: 100%;
+        width: 50%;
         padding: 0.7rem 1.5rem;
         font-size: 0.95rem;
         box-shadow: 0 3px 10px rgba(0, 120, 212, 0.2);
