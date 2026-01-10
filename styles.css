@@ -440,7 +440,7 @@ h1 em {
 }
 
 /* Group tabs (Phase 1/Phase 2) */
-.pdf-group-nav {
+.pdf-group-nav, .test-group-nav {
     display: flex;
     gap: 0.75rem;
     justify-content: center;
@@ -448,7 +448,7 @@ h1 em {
     margin-bottom: 1.5rem;
 }
 
-.pdf-group-tab {
+.pdf-group-tab, .test-group-tab {
     padding: 0.65rem 1.75rem;
     border: 2px solid #e0e0e0;
     background: #fff;
@@ -461,13 +461,48 @@ h1 em {
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-.pdf-group-tab:hover {
+.pdf-group-tab:hover, .test-group-tab:hover {
     border-color: #0078d4;
     color: #0078d4;
     transform: scale(1.05);
 }
 
-.pdf-group-tab.active {
+.pdf-group-tab.active, .test-group-tab.active {
+    background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 16px rgba(0,120,212,0.3);
+}
+
+/* Phase 2 Old/New toggle (visible only on Phase 2) */
+.version-nav {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.version-tab {
+    padding: 0.65rem 1.75rem;
+    border: 2px solid #e0e0e0;
+    background: #fff;
+    color: #666;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.version-tab:hover {
+    border-color: #0078d4;
+    color: #0078d4;
+    transform: scale(1.05);
+}
+
+.version-tab.active {
     background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
     color: #fff;
     border-color: transparent;

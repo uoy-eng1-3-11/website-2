@@ -65,8 +65,14 @@
 
                 <!-- Old/New -->
                 <nav class="pdf-group-nav" aria-label="Deliverable groups">
-                    <button class="pdf-group-tab active" data-group="old">Phase 1</button>
-                    <button class="pdf-group-tab" data-group="new">Phase 2</button>
+                    <button class="pdf-group-tab active" data-phase="phase1">Phase 1</button>
+                    <button class="pdf-group-tab" data-phase="phase2">Phase 2</button>
+                </nav>
+
+                <!-- Show only on Phase 2: Old/New document distinction -->
+                <nav class="version-nav hidden" aria-label="Phase 2 versions">
+                    <button class="version-tab active" data-version="old">Old</button>
+                    <button class="version-tab" data-version="new">New</button>
                 </nav>
 
                 <!-- 5 selectors (labels update per group) -->
@@ -88,6 +94,25 @@
                 </div>
             </div>
         </section>
+
+        <!-- Testing files section -->
+        <section id="testing">
+            <div class="pdf-menu" id="testMenu">
+                <h3>Testing Files</h3>
+
+                <!-- Toggle between Test Results and Test Coverage -->
+                <nav class="test-group-nav" aria-label="Testing groups">
+                    <button class="test-group-tab active" data-type="results">Test Results</button>
+                    <button class="test-group-tab" data-type="coverage">Test Coverage</button>
+                </nav>
+
+                <!-- Links populated by JS based on selected type -->
+                <div class="link-wrapper">
+                    <div class="links" id="testingLinks"></div>
+                </div>
+            </div>
+        </section>
+        
 
         <!-- Team section -->
         <section id="team">
@@ -127,45 +152,66 @@
 
         <script>
             (function () {
-                // Point these to your real files in /pdfs
-                const groups = {
-                    old: [
+                // Phase + Version structure
+                const data = {
+                    phase1: [
                         { title: 'Requirements', src: 'pdfs/Arch1.pdf' },
                         { title: 'Architecture', src: 'pdfs/old2.pdf' },
                         { title: 'Risk Assessment', src: 'pdfs/old3.pdf' },
                         { title: 'Planning', src: 'pdfs/old4.pdf' },
                         { title: 'Implementation', src: 'pdfs/old5.pdf' }
                     ],
-                    new: [
-                        { title: 'Change Report', src: 'pdfs/new1.pdf' },
-                        { title: 'Implementation', src: 'pdfs/new2.pdf' },
-                        { title: 'Testing', src: 'pdfs/new3.pdf' },
-                        { title: 'User Evaluation', src: 'pdfs/new4.pdf' },
-                        { title: 'Continuous Integration', src: 'pdfs/new5.pdf' }
-                    ]
+                    phase2: {
+                        old: [
+                            { title: 'Requirements', src: 'pdfs/Arch1.pdf' },
+                            { title: 'Architecture', src: 'pdfs/old2.pdf' },
+                            { title: 'Risk Assessment', src: 'pdfs/old3.pdf' },
+                            { title: 'Planning', src: 'pdfs/old4.pdf' },
+                            { title: 'Implementation', src: 'pdfs/old5.pdf' }
+                        ],
+                        new: [
+                            { title: 'Change Report', src: 'pdfs/new1.pdf' },
+                            { title: 'Implementation', src: 'pdfs/new2.pdf' },
+                            { title: 'Testing', src: 'pdfs/new3.pdf' },
+                            { title: 'User Evaluation', src: 'pdfs/new4.pdf' },
+                            { title: 'Continuous Integration', src: 'pdfs/new5.pdf' }
+                        ]
+                    }
                 };
 
                 const frame = document.getElementById('pdfFrame');
                 const viewFull = document.getElementById('viewFullBtn');
                 const download = document.getElementById('downloadBtn');
 
-                const groupTabs = document.querySelectorAll('.pdf-group-tab');
+                const phaseTabs = document.querySelectorAll('.pdf-group-tab');
+                const versionNav = document.querySelector('.version-nav');
+                const versionTabs = document.querySelectorAll('.version-tab');
                 const pdfTabs = document.querySelectorAll('.pdf-tab');
 
-                let currentGroup = 'old';
+                let currentPhase = 'phase1';
+                let currentVersion = 'old'; // used only for phase2
                 let currentIndex = 0;
 
-                function updateTabLabels(group) {
-                    const pdfs = groups[group];
+                function updateTabLabels() {
+                    let pdfs = [];
+                    if (currentPhase === 'phase1') {
+                        pdfs = data.phase1;
+                    } else {
+                        pdfs = data.phase2[currentVersion];
+                    }
                     pdfTabs.forEach((tab, idx) => {
                         if (pdfs[idx]) tab.textContent = pdfs[idx].title;
                     });
                 }
 
-                function loadPdf(group, i) {
-                    const pdf = groups[group][i];
+                function loadCurrent() {
+                    let pdf;
+                    if (currentPhase === 'phase1') {
+                        pdf = data.phase1[currentIndex];
+                    } else {
+                        pdf = data.phase2[currentVersion][currentIndex];
+                    }
                     if (!pdf) return;
-                    // Simple inline PDF (no PDF.js)
                     frame.src = pdf.src + '#toolbar=0&navpanes=0';
                     viewFull.href = pdf.src;
                     download.href = pdf.src;
@@ -174,32 +220,62 @@
 
                 function setActiveTab(i) {
                     pdfTabs.forEach(t => t.classList.remove('active'));
-                    pdfTabs[i].classList.add('active');
+                    if (pdfTabs[i]) pdfTabs[i].classList.add('active');
                 }
 
-                function switchGroup(group) {
-                    currentGroup = group;
-                    groupTabs.forEach(t => t.classList.toggle('active', t.dataset.group === group));
-                    updateTabLabels(group);
-                    loadPdf(currentGroup, currentIndex);
+                function setActivePhaseTab(phase) {
+                    phaseTabs.forEach(t => t.classList.toggle('active', t.dataset.phase === phase));
                 }
 
-                groupTabs.forEach(btn => {
-                    btn.addEventListener('click', () => switchGroup(btn.dataset.group));
+                function setActiveVersionTab(ver) {
+                    versionTabs.forEach(t => t.classList.toggle('active', t.dataset.version === ver));
+                }
+
+                function switchPhase(phase) {
+                    currentPhase = phase;
+                    setActivePhaseTab(phase);
+                    // Toggle Old/New only for Phase 2
+                    const showVersions = phase === 'phase2';
+                    versionNav.classList.toggle('hidden', !showVersions);
+                    if (showVersions) {
+                        // keep currentVersion as-is; ensure a visible selection
+                        setActiveVersionTab(currentVersion);
+                    }
+                    updateTabLabels();
+                    loadCurrent();
+                }
+
+                function switchVersion(ver) {
+                    if (currentPhase !== 'phase2') return; // only relevant on phase2
+                    currentVersion = ver;
+                    setActiveVersionTab(ver);
+                    updateTabLabels();
+                    loadCurrent();
+                }
+
+                // Event wiring
+                phaseTabs.forEach(btn => {
+                    btn.addEventListener('click', () => switchPhase(btn.dataset.phase));
+                });
+
+                versionTabs.forEach(btn => {
+                    btn.addEventListener('click', () => switchVersion(btn.dataset.version));
                 });
 
                 pdfTabs.forEach((btn, idx) => {
                     btn.addEventListener('click', () => {
                         currentIndex = idx;
                         setActiveTab(idx);
-                        loadPdf(currentGroup, currentIndex);
+                        loadCurrent();
                     });
                 });
 
-                // Init
-                updateTabLabels('old');
+                // Init (default to Phase 1)
+                setActivePhaseTab('phase1');
+                versionNav.classList.add('hidden');
+                updateTabLabels();
                 setActiveTab(0);
-                loadPdf('old', 0);
+                loadCurrent();
             })();
         </script>
         <!-- End PDF Menu -->
@@ -229,6 +305,57 @@
     // Init overlay based on poster
     toggleOverlay();
 })();
+        </script>
+
+        <script>
+            // Testing files toggle and link population
+            (function(){
+                const testsData = {
+                    results: [
+                        { title: 'JUnit (Linux)', href: 'test-files/JUnit (Linux).zip' },
+                        { title: 'JUnit (MacOS)', href: 'test-files/JUnit (MacOS).zip' },
+                        { title: 'JUnit (Windows)', href: 'test-files/JUnit (Windows).zip' }
+                    ],
+                    coverage: [
+                        { title: 'JaCoCo (Linux)', href: 'test-files/JaCoCo (Linux).zip' },
+                        { title: 'JaCoCo (MacOS)', href: 'test-files/JaCoCo (MacOS).zip' },
+                        { title: 'JaCoCo (Windows)', href: 'test-files/JaCoCo (Windows).zip' }
+                    ]
+                };
+
+                const tabs = document.querySelectorAll('.test-group-tab');
+                const linksContainer = document.getElementById('testingLinks');
+                let currentType = 'results';
+
+                function setActive(type){
+                    tabs.forEach(t => t.classList.toggle('active', t.dataset.type === type));
+                }
+
+                function renderLinks(){
+                    const items = testsData[currentType] || [];
+                    linksContainer.innerHTML = '';
+                    items.forEach(({ title, href }) => {
+                        const a = document.createElement('a');
+                        a.className = 'btn-link';
+                        a.href = href;
+                        a.textContent = title;
+                        a.setAttribute('download', href.split('/').pop());
+                        linksContainer.appendChild(a);
+                    });
+                }
+
+                tabs.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        currentType = btn.dataset.type;
+                        setActive(currentType);
+                        renderLinks();
+                    });
+                });
+
+                // Init
+                setActive(currentType);
+                renderLinks();
+            })();
         </script>
 
     </body>
