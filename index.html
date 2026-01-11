@@ -173,18 +173,17 @@
                 const data = {
                     phase1: {
                         old: [
-                            { title: 'Requirements', src: 'pdfs/Arch1.pdf' },
-                            { title: 'Architecture', src: 'pdfs/old2.pdf' },
-                            { title: 'Risk Assessment', src: 'pdfs/old3.pdf' },
-                            { title: 'Planning', src: 'pdfs/old4.pdf' },
-                            { title: 'Implementation', src: 'pdfs/old5.pdf' }
+                            { title: 'Requirements', src: 'phase1-old/Req1.pdf' },
+                            { title: 'Architecture', src: 'phase1-old/Arch1.pdf' },
+                            { title: 'Risk Assessment', src: 'phase1-old/Risk1.pdf' },
+                            { title: 'Planning', src: 'phase1-old/Plan1.pdf' },
+                            { title: 'Implementation', src: 'phase1-old/Impl1.pdf' }
                         ],
                         new: [
-                            { title: 'Requirements', src: 'pdfs/Arch1Old.pdf' },
-                            { title: 'Architecture', src: 'pdfs/old2.pdf' },
-                            { title: 'Risk Assessment', src: 'pdfs/old3.pdf' },
-                            { title: 'Planning', src: 'pdfs/old4.pdf' },
-                            { title: 'Implementation', src: 'pdfs/old5.pdf' }
+                            { title: 'Requirements', src: 'phase1-new/Req1.pdf' },
+                            { title: 'Architecture', src: 'phase1-new/Arch1.pdf' },
+                            { title: 'Risk Assessment', src: 'phase1-new/Risk1.pdf' },
+                            { title: 'Planning', src: 'phase1-new/Plan1.pdf' },
                         ]
                     },
                     phase2: [
@@ -216,9 +215,23 @@
                     } else {
                         pdfs = data.phase2;
                     }
+
+                    if (currentIndex >= pdfs.length) {
+                        currentIndex = 0;
+                    }
+
                     pdfTabs.forEach((tab, idx) => {
-                        if (pdfs[idx]) tab.textContent = pdfs[idx].title;
+                        const hasItem = !!pdfs[idx];
+                        tab.classList.toggle('hidden', !hasItem);
+                        if (hasItem) {
+                            tab.textContent = pdfs[idx].title;
+                        } else {
+                            tab.classList.remove('active');
+                        }
                     });
+
+                    // Keep active tab in sync with the clamped index
+                    setActiveTab(currentIndex);
                 }
 
                 function loadCurrent() {
