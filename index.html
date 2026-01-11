@@ -26,7 +26,7 @@
             <div class="nav-right">
                 <a href="#deliverables" class="nav-link">Deliverables</a>
                 <a href="#team" class="nav-link">Team</a>
-                <a href="game/Maze Game-1.0.0.jar" download class="nav-btn">Download Game</a>
+                <a href="#download" class="nav-btn">Download Game</a>
             </div>
         </nav>
 
@@ -52,10 +52,12 @@
 
         <div class="link-wrapper">
             <div class="links">
-                <a href="game/Maze Game-1.0.0.jar" download class="btn-link">Download Game</a>
+                <a href="#download" class="btn-link">Download Game</a>
                 <a href="https://github.com/uoy-eng1-3-11" target="_blank" rel="noopener" class="btn-link">View on Github</a>
             </div>    
         </div>
+        
+
         
 
         <!-- Deliverables section -->
@@ -112,6 +114,22 @@
                 </div>
             </div>
         </section>
+
+        <!-- Download section-->
+        
+        <!-- Download section -->
+        <section id="download">
+            <div class="pdf-menu">
+                <h3>Download Game</h3>
+                <div class="link-wrapper">
+                    <div class="links">
+                        <a href="game/Maze Game-1.0.0-Windows.jar" download class="btn-link">Windows</a>
+                        <a href="game/Maze Game-1.0.0-MacOS.jar" download class="btn-link">MacOS</a>
+                        <a href="game/Maze Game-1.0.0-Linux.jar" download class="btn-link">Linux</a>
+                    </div>
+                </div>
+            </div>
+        </section>
         
 
         <!-- Team section -->
@@ -154,29 +172,29 @@
             (function () {
                 // Phase + Version structure
                 const data = {
-                    phase1: [
-                        { title: 'Requirements', src: 'pdfs/Arch1.pdf' },
-                        { title: 'Architecture', src: 'pdfs/old2.pdf' },
-                        { title: 'Risk Assessment', src: 'pdfs/old3.pdf' },
-                        { title: 'Planning', src: 'pdfs/old4.pdf' },
-                        { title: 'Implementation', src: 'pdfs/old5.pdf' }
-                    ],
-                    phase2: {
+                    phase1: {
                         old: [
-                            { title: 'Change Report', src: 'pdfs/new1.pdf' },
-                            { title: 'Implementation', src: 'pdfs/new2.pdf' },
-                            { title: 'Testing', src: 'pdfs/new3.pdf' },
-                            { title: 'User Evaluation', src: 'pdfs/new4.pdf' },
-                            { title: 'Continuous Integration', src: 'pdfs/new5.pdf' }
+                            { title: 'Requirements', src: 'pdfs/Arch1.pdf' },
+                            { title: 'Architecture', src: 'pdfs/old2.pdf' },
+                            { title: 'Risk Assessment', src: 'pdfs/old3.pdf' },
+                            { title: 'Planning', src: 'pdfs/old4.pdf' },
+                            { title: 'Implementation', src: 'pdfs/old5.pdf' }
                         ],
                         new: [
-                            { title: 'Change Report', src: 'pdfs/new1.pdf' },
-                            { title: 'Implementation', src: 'pdfs/new2.pdf' },
-                            { title: 'Testing', src: 'pdfs/new3.pdf' },
-                            { title: 'User Evaluation', src: 'pdfs/new4.pdf' },
-                            { title: 'Continuous Integration', src: 'pdfs/new5.pdf' }
+                            { title: 'Requirements', src: 'pdfs/Arch1Old.pdf' },
+                            { title: 'Architecture', src: 'pdfs/old2.pdf' },
+                            { title: 'Risk Assessment', src: 'pdfs/old3.pdf' },
+                            { title: 'Planning', src: 'pdfs/old4.pdf' },
+                            { title: 'Implementation', src: 'pdfs/old5.pdf' }
                         ]
-                    }
+                    },
+                    phase2: [
+                        { title: 'Change Report', src: 'pdfs/new1.pdf' },
+                        { title: 'Implementation', src: 'pdfs/new2.pdf' },
+                        { title: 'Testing', src: 'pdfs/new3.pdf' },
+                        { title: 'User Evaluation', src: 'pdfs/new4.pdf' },
+                        { title: 'Continuous Integration', src: 'pdfs/new5.pdf' }
+                    ]
                 };
 
                 const frame = document.getElementById('pdfFrame');
@@ -189,15 +207,15 @@
                 const pdfTabs = document.querySelectorAll('.pdf-tab');
 
                 let currentPhase = 'phase1';
-                let currentVersion = 'old'; // used only for phase2
+                let currentVersion = 'old'; // used only for phase1
                 let currentIndex = 0;
 
                 function updateTabLabels() {
                     let pdfs = [];
                     if (currentPhase === 'phase1') {
-                        pdfs = data.phase1;
+                        pdfs = data.phase1[currentVersion];
                     } else {
-                        pdfs = data.phase2[currentVersion];
+                        pdfs = data.phase2;
                     }
                     pdfTabs.forEach((tab, idx) => {
                         if (pdfs[idx]) tab.textContent = pdfs[idx].title;
@@ -207,9 +225,9 @@
                 function loadCurrent() {
                     let pdf;
                     if (currentPhase === 'phase1') {
-                        pdf = data.phase1[currentIndex];
+                        pdf = data.phase1[currentVersion][currentIndex];
                     } else {
-                        pdf = data.phase2[currentVersion][currentIndex];
+                        pdf = data.phase2[currentIndex];
                     }
                     if (!pdf) return;
                     frame.src = pdf.src + '#toolbar=0&navpanes=0';
@@ -234,8 +252,8 @@
                 function switchPhase(phase) {
                     currentPhase = phase;
                     setActivePhaseTab(phase);
-                    // Toggle Old/New only for Phase 2
-                    const showVersions = phase === 'phase2';
+                    // Toggle Old/New only for Phase 1
+                    const showVersions = phase === 'phase1';
                     versionNav.classList.toggle('hidden', !showVersions);
                     if (showVersions) {
                         // keep currentVersion as-is; ensure a visible selection
@@ -246,7 +264,7 @@
                 }
 
                 function switchVersion(ver) {
-                    if (currentPhase !== 'phase2') return; // only relevant on phase2
+                    if (currentPhase !== 'phase1') return; // only relevant on phase1
                     currentVersion = ver;
                     setActiveVersionTab(ver);
                     updateTabLabels();
@@ -272,7 +290,7 @@
 
                 // Init (default to Phase 1)
                 setActivePhaseTab('phase1');
-                versionNav.classList.add('hidden');
+                versionNav.classList.remove('hidden');
                 updateTabLabels();
                 setActiveTab(0);
                 loadCurrent();
